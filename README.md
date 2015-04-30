@@ -9,15 +9,15 @@ Unity 3D Macros System
 ## Using
 
 In any file (text or script) declare macros:
-'''
+```C#
 #region source macros MACROSNAME
 var anyCode = 0;
 ++anyCode;
 #endregion
-'''
+```
 
 In any file (where you want to use it):
-'''
+```C#
 #region macros MACROSNAME
 #endregion
-'''
+```
