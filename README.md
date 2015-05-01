@@ -21,3 +21,14 @@ In any file (where you want to use it):
 #region macros MACROSNAME
 #endregion
 ```
+
+Result:
+```C#
+#region macros MACROSNAME
+/* This code is auto-generated
+ * Do not change it
+ */
+var anyCode = 0;
+++anyCode;
+#endregion
+```
