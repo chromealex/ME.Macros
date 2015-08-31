@@ -3,12 +3,15 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Text.RegularExpressions;
 using System.IO;
+using System;
 
 namespace ME.Macros {
 
 	public static class MacrosTemplates {
 
-		const string pattern = @"(\s?)#region\s+macros\s+([A-Za-z0-9]+)\s+(.*?)#endregion";
+		//const string pattern = @"(\s?)#region\s+macros\s+([A-Za-z0-9]+)\s+(.*?)#endregion";
+
+		const string pattern = @"(\s?)#region\s+macros\s+(?<macrosName>[A-Za-z0-9]+)\s+(?<macrosArgs>\(.*?\).*?\n|)(?<macrosBody>.*?)#endregion";
 
 		const string macrosTemplate = @"#region macros {{NAME}}
 /*
@@ -45,7 +48,30 @@ namespace ME.Macros {
 
 		}
 
+		public static string GetPartOfMacros(string sourceText, string macrosName, string partName) {
+
+			var res = string.Empty;
+
+			Regex rgx = new Regex(pattern, RegexOptions.IgnoreCase | RegexOptions.Singleline);
+			var matches = rgx.Matches(sourceText);
+
+			foreach (Match match in matches) {
+				
+				if (match.Groups["macrosName"].Value == macrosName) {
+					res = match.Groups[partName].Value;
+					break;
+				}
+				
+			}
+
+			return res;
+
+		}
+
 		public static string RefreshMacros(this string sourceText, string macrosName, string macrosCode) {
+
+			var vars = MacrosTemplates.GetParameters(sourceText, macrosName);
+			var rawArgs = MacrosTemplates.GetPartOfMacros(sourceText, macrosName, "macrosArgs");
 
 			var macrosText = macrosTemplate.Replace("{{NAME}}", macrosName);
 			macrosText = macrosText.Replace("{{CODE}}", macrosCode);
@@ -61,6 +87,12 @@ namespace ME.Macros {
 			rgx = new Regex(pt, RegexOptions.IgnoreCase | RegexOptions.Singleline);
 			//Debug.Log(macrosName + ": " + sourceText + " => " + macrosText);
 			sourceText = rgx.Replace(sourceText, spaces + macrosText);
+
+			foreach (var item in vars) {
+				sourceText = sourceText.Replace("{" + item.Key + "}", item.Value);
+			}
+
+			sourceText = sourceText.Replace(macrosName, macrosName + " " + rawArgs);
 
 			return sourceText;
 
@@ -93,6 +125,41 @@ namespace ME.Macros {
 
 		}
 
+		private static Dictionary<string, string> GetParameters(string sourceText, string macrosName) {
+
+			string args = MacrosTemplates.GetPartOfMacros(sourceText, macrosName, "macrosArgs").Replace("\r", string.Empty).Replace("\n", string.Empty).Trim();
+
+			var res = new Dictionary<string, string>();
+
+			if (string.IsNullOrEmpty(args) == false) {
+
+				var separator = args.EndsWith(")") == true ? "," : args.Substring(args.Length - 1);
+				args = args.Remove(args.IndexOf(")")).Replace("(", string.Empty);
+
+				var pairs = args.Split(new string[] { separator }, System.StringSplitOptions.None);
+
+				Debug.LogError("Separator: " + separator + " :: " + pairs.Length);
+
+				foreach (var pair in pairs) {
+
+					var p = pair.Split(new string[] {":"}, System.StringSplitOptions.None);
+					if (p.Length < 2) {
+						Debug.LogWarning("Wrong args format");
+						continue;
+					}
+
+					res.Add(p[0], p[1]);
+
+				}
+
+			}
+
+			return res;
+
+		}
+
 	}
+
+
 
 }

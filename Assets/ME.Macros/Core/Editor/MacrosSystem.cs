@@ -7,7 +7,28 @@ using System.IO;
 namespace ME.Macros {
 	
 	public class MacrosSystem {
-		
+
+		/*private static Dictionary<string, string> fileCRC = new Dictionary<string, string>();
+
+		public static void UpdateCRC(string fileName, string content) {
+
+			if (MacrosSystem.fileCRC.ContainsKey(fileName) == true) {
+				MacrosSystem.fileCRC[fileName] = content;
+			} else {
+				MacrosSystem.fileCRC.Add(fileName, content);
+			}
+
+		}
+
+		public static bool IsFileModifyed(string fileName, string content) {
+
+			var storedContent = string.Empty;
+			MacrosSystem.fileCRC.TryGetValue(fileName, out storedContent);
+
+			return storedContent != content;
+
+		}*/
+
 		public static bool IsFileContainsMacros(string path) {
 
 			var script = AssetDatabase.LoadAssetAtPath(path, typeof(MonoScript)) as MonoScript;
@@ -31,7 +52,7 @@ namespace ME.Macros {
 			foreach (var macrosName in names) {
 
 				string text;
-				if (MacrosSystem.cacheMacros.TryGetValue (macrosName, out text) == false) {
+				if (MacrosSystem.cacheMacros.TryGetValue(macrosName, out text) == false) {
 
 					Debug.LogWarningFormat ("[MACROS] Macros `{0}` doesn't exists in file `{1}`. Skipped.", macrosName, path);
 
@@ -102,13 +123,13 @@ namespace ME.Macros {
 
 				//Debug.Log("Macros: " + macrosName + " :: " + macrosText);
 
-				if (MacrosSystem.cacheMacros.ContainsKey (macrosName) == true) {
+				if (MacrosSystem.cacheMacros.ContainsKey(macrosName) == true) {
 
 					Debug.LogWarningFormat("[MACROS] Duplicate macros with name `{0}` ({1}). Skipped.", macrosName, path);
 
 				} else {
 
-					MacrosSystem.cacheMacros.Add (macrosName, macrosText);
+					MacrosSystem.cacheMacros.Add(macrosName, macrosText);
 
 				}
 
