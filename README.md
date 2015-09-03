@@ -13,12 +13,14 @@ In any file (text or script) declare macros:
 #region source macros MACROSNAME
 var anyCode = 0;
 ++anyCode;
+{someCode1}
+{someCode2}
 #endregion
 ```
 
 In any file (where you want to use it):
 ```C#
-#region macros MACROSNAME
+#region macros MACROSNAME (someCode1: var a = "test";, someCode2: Debug.Log(a);)
 #endregion
 ```
 
@@ -30,5 +32,7 @@ Result:
  */
 var anyCode = 0;
 ++anyCode;
+var a = "test";
+Debug.Log(a);
 #endregion
 ```

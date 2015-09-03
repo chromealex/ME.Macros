@@ -138,8 +138,6 @@ namespace ME.Macros {
 
 				var pairs = args.Split(new string[] { separator }, System.StringSplitOptions.None);
 
-				Debug.LogError("Separator: " + separator + " :: " + pairs.Length);
-
 				foreach (var pair in pairs) {
 
 					var p = pair.Split(new string[] {":"}, System.StringSplitOptions.None);
