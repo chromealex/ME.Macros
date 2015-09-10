@@ -3,7 +3,7 @@ Unity 3D Macros System
 
 ## Features
 
-1. Source macros in scripts files
+1. Source macros in script files
 2. Source macros in text files
 
 ## Using
